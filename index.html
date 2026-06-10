@@ -4,149 +4,37 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0e0f0c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Project Rebuild</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#0e0f0c; --panel:#16180f; --card:#181a14; --card2:#1f2218; --line:#2a2e20;
-    --ink:#edf0e4; --mut:#9aa18a; --dim:#5c6350;
-    --lime:#c8f04b; --lime-dim:rgba(200,240,75,.14);
-    --amber:#f0a84b; --rose:#f06a6a; --sky:#6ac8f0; --violet:#b59af0;
-    --r:18px;
-    --disp:"Bricolage Grotesque",sans-serif;
-    --mono:"JetBrains Mono",monospace;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{background:var(--bg);color:var(--ink);font-family:var(--disp);
-       padding-bottom:88px;min-height:100vh;
-       background-image:radial-gradient(ellipse 80% 40% at 50% -5%,rgba(200,240,75,.07),transparent),
-                        repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,.006) 3px,rgba(255,255,255,.006) 4px)}
-  .wrap{max-width:520px;margin:0 auto;padding:0 16px}
-  .ic{width:1em;height:1em;flex-shrink:0;display:inline-block;vertical-align:-.12em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;overflow:hidden}
-
-  /* Header */
-  header{padding:26px 0 4px}
-  .kick{font:700 11px var(--mono);letter-spacing:3px;color:var(--lime);text-transform:uppercase}
-  h1{font-size:34px;font-weight:800;letter-spacing:-1.2px;line-height:1.02;margin-top:6px}
-  h1 em{font-style:normal;color:var(--lime)}
-  .sub-head{color:var(--mut);font-size:13px;margin-top:6px;line-height:1.5}
-
-  /* Day selector */
-  .daybar{display:flex;gap:5px;margin:18px 0 4px}
-  .daychip{flex:1;text-align:center;padding:10px 0 8px;border-radius:12px;background:var(--card);
-           border:1px solid var(--line);cursor:pointer;transition:.15s}
-  .daychip .dl{font:700 10px var(--mono);letter-spacing:1px;color:var(--dim);text-transform:uppercase}
-  .daychip .dd{width:5px;height:5px;border-radius:99px;margin:5px auto 0;background:var(--line)}
-  .daychip.sel{background:var(--lime);border-color:var(--lime);transform:translateY(-2px)}
-  .daychip.sel .dl{color:#1a1d10}
-  .daychip.sel .dd{background:#1a1d10}
-  .daychip.istoday:not(.sel){border-color:var(--lime)}
-  .hint{font:500 11px var(--mono);color:var(--dim);margin:8px 0 0;letter-spacing:.5px}
-
-  /* Tabs */
-  nav{position:fixed;bottom:0;left:0;right:0;background:rgba(14,15,12,.94);backdrop-filter:blur(16px);
-      border-top:1px solid var(--line);z-index:50;padding-bottom:env(safe-area-inset-bottom)}
-  .tabs{max-width:520px;margin:0 auto;display:flex}
-  .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 9px;
-       color:var(--dim);font:600 10px var(--mono);letter-spacing:1px;text-transform:uppercase;
-       border:none;background:none;cursor:pointer}
-  .tab .ic{width:20px;height:20px}
-  .tab.active{color:var(--lime)}
-
-  .page{display:none;animation:rise .3s cubic-bezier(.2,.8,.3,1)}
-  .page.active{display:block}
-  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-
-  h2{font-size:13px;font-weight:800;margin:24px 0 10px;display:flex;align-items:center;gap:8px;
-     letter-spacing:2px;text-transform:uppercase;color:var(--mut)}
-  h2 .ic{width:16px;height:16px;color:var(--lime)}
-  .lead{color:var(--mut);font-size:13.5px;line-height:1.55;margin:-2px 0 14px}
-
-  /* Hero */
-  .hero{border-radius:var(--r);padding:20px;margin-top:16px;border:1px solid var(--line);
-        background:linear-gradient(140deg,var(--card2),var(--card));position:relative;overflow:hidden}
-  .hero::after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:99px;
-               background:radial-gradient(circle,var(--lime-dim),transparent 70%)}
-  .hero .tag{font:700 10px var(--mono);letter-spacing:2px;color:var(--lime);text-transform:uppercase}
-  .hero h3{font-size:30px;font-weight:800;letter-spacing:-.8px;margin:6px 0 6px}
-  .hero p{color:var(--mut);font-size:13.5px;line-height:1.55;max-width:90%}
-  .progress{margin-top:16px;height:7px;background:#10120c;border-radius:99px;overflow:hidden}
-  .progress div{height:100%;background:var(--lime);border-radius:99px;transition:width .4s ease;width:0%}
-  .pct{font:600 11px var(--mono);color:var(--mut);margin-top:7px;letter-spacing:.5px}
-
-  /* Exercise cards */
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
-        margin-bottom:14px;transition:opacity .2s}
-  .card.done{opacity:.5}
-  .imgbox{width:100%;height:150px;background:var(--card2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
-  .imgbox img{width:100%;height:100%;object-fit:cover;object-position:center 25%;filter:saturate(.85) contrast(1.02)}
-  .imgbox .ph .ic{width:42px;height:42px;color:#343a28}
-  .num{position:absolute;left:12px;top:12px;background:rgba(14,15,12,.8);backdrop-filter:blur(6px);
-       font:700 11px var(--mono);color:var(--lime);padding:4px 9px;border-radius:8px;letter-spacing:1px}
-  .cbody{padding:15px}
-  .crow{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-  .cname{font-size:17px;font-weight:800;letter-spacing:-.3px}
-  .cdose{font:700 11px var(--mono);color:var(--lime);white-space:nowrap;background:var(--lime-dim);
-         padding:5px 9px;border-radius:8px;letter-spacing:.3px}
-  .cue{display:flex;gap:9px;margin-top:11px;font-size:13px;line-height:1.5;color:#c9cfba}
-  .cue .ic{width:15px;height:15px;margin-top:2.5px}
-  .cue.breath .ic{color:var(--sky)}
-  .cue.wrong .ic{color:var(--amber)}
-  .cue b{color:var(--ink)}
-  .check{margin-top:13px;width:100%;padding:11px;border-radius:11px;border:1px solid var(--line);
-         background:var(--card2);color:var(--mut);font:700 11px var(--mono);letter-spacing:1.5px;
-         text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
-  .check .ic{width:15px;height:15px}
-  .card.done .check{background:var(--lime-dim);color:var(--lime);border-color:rgba(200,240,75,.3)}
-
-  /* Rows */
-  .row{display:flex;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:14px;
-       padding:14px;margin-bottom:9px;align-items:flex-start}
-  .row .n{min-width:28px;height:28px;border-radius:9px;background:var(--card2);color:var(--lime);
-          display:flex;align-items:center;justify-content:center;font:700 11px var(--mono);flex-shrink:0;padding:0 4px}
-  .row .t{font-size:14.5px;font-weight:800;letter-spacing:-.2px}
-  .row .d{font-size:12.5px;color:var(--mut);line-height:1.5;margin-top:3px}
-  .row .d b{color:#c9cfba}
-
-  /* Week rows */
-  .wk{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;
-      padding:14px;margin-bottom:9px;align-items:center;cursor:pointer}
-  .wk .dot{width:9px;height:9px;border-radius:99px;flex-shrink:0}
-  .wk .wd{width:38px;font:700 11px var(--mono);color:var(--dim);letter-spacing:1px}
-  .wk .wt{font-size:14px;font-weight:800}
-  .wk .ws{font-size:11.5px;color:var(--mut);margin-top:2px}
-  .wk.istoday{border-color:var(--lime)}
-  .wk .go{margin-left:auto;color:var(--dim)}
-  .wk .go .ic{width:16px;height:16px}
-
-  .note{display:flex;gap:10px;background:rgba(240,168,75,.07);border:1px solid rgba(240,168,75,.22);
-        border-radius:13px;padding:13px 14px;font-size:12.5px;line-height:1.55;color:#dcc096;margin:16px 0}
-  .note .ic{width:16px;height:16px;color:var(--amber);margin-top:2px}
-  footer{color:#3a3f2e;font:500 10.5px var(--mono);text-align:center;margin:28px 0 12px;letter-spacing:.5px}
-</style>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<!-- Inline icon sprite (self-contained; no CDN, no overflow) -->
+<!-- ── Inline SVG sprite (zero CDN, zero render bugs) ── -->
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
-  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
-  <symbol id="i-sun" viewBox="0 0 24 24"><path d="M17 18a5 5 0 0 0-10 0"/><path d="M12 2v5M4.2 10.2l1.4 1.4M1 18h2M21 18h2M18.4 11.6l1.4-1.4M22 22H2"/></symbol>
-  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
-  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
-  <symbol id="i-wind" viewBox="0 0 24 24"><path d="M9.6 4.6A2 2 0 1 1 11 8H2M12.6 19.4A2 2 0 1 0 14 16H2M17.7 7.7A2.5 2.5 0 1 1 19.5 12H2"/></symbol>
-  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m10.3 3.9-8.5 14.2A2 2 0 0 0 3.5 21h17a2 2 0 0 0 1.7-2.9L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
-  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-4.5"/></symbol>
-  <symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></symbol>
-  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 11-12h-7l1-8z"/></symbol>
-  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 2-3.2 2-5a5 5 0 0 0-9-3 5 5 0 0 0-9 3c0 6 9 11 9 11s3.5-2 5.7-4.6"/><path d="M3 12h4l2-4 3 7 2-5 1 2h4"/></symbol>
-  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 0 12 0V3H6v6zM6 4H3v2a4 4 0 0 0 4 4M18 4h3v2a4 4 0 0 1-4 4"/><path d="M12 15v3M8 21h8M10 18h4"/></symbol>
-  <symbol id="i-loop" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
-  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6.5 6.5h11M2 9.5v5M22 9.5v5M4 12h-2M22 12h-2M6.5 17.5h11"/><rect x="4" y="6.5" width="2.5" height="11" rx="1"/><rect x="17.5" y="6.5" width="2.5" height="11" rx="1"/></symbol>
-  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-target"  viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+  <symbol id="i-sun"     viewBox="0 0 24 24"><path d="M17 18a5 5 0 0 0-10 0"/><path d="M12 2v5M4.2 10.2l1.4 1.4M1 18h2M21 18h2M18.4 11.6l1.4-1.4M22 22H2"/></symbol>
+  <symbol id="i-cal"     viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-shield"  viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-wind"    viewBox="0 0 24 24"><path d="M9.6 4.6A2 2 0 1 1 11 8H2M12.6 19.4A2 2 0 1 0 14 16H2M17.7 7.7A2.5 2.5 0 1 1 19.5 12H2"/></symbol>
+  <symbol id="i-alert"   viewBox="0 0 24 24"><path d="m10.3 3.9-8.5 14.2A2 2 0 0 0 3.5 21h17a2 2 0 0 0 1.7-2.9L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-check"   viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-4.5"/></symbol>
+  <symbol id="i-circle"  viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></symbol>
+  <symbol id="i-zap"     viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 11-12h-7l1-8z"/></symbol>
+  <symbol id="i-heart"   viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 2-3.2 2-5a5 5 0 0 0-9-3 5 5 0 0 0-9 3c0 6 9 11 9 11s3.5-2 5.7-4.6"/><path d="M3 12h4l2-4 3 7 2-5 1 2h4"/></symbol>
+  <symbol id="i-trophy"  viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 0 12 0V3H6v6zM6 4H3v2a4 4 0 0 0 4 4M18 4h3v2a4 4 0 0 1-4 4"/><path d="M12 15v3M8 21h8M10 18h4"/></symbol>
+  <symbol id="i-loop"    viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="i-bell"    viewBox="0 0 24 24"><path d="M6.5 6.5h11M2 9.5v5M22 9.5v5"/><rect x="4" y="6.5" width="2.5" height="11" rx="1"/><rect x="17.5" y="6.5" width="2.5" height="11" rx="1"/></symbol>
+  <symbol id="i-arrow"   viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-lock"    viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-unlock"  viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></symbol>
+  <symbol id="i-leaf"    viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
+  <symbol id="i-delete"  viewBox="0 0 24 24"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></symbol>
+  <symbol id="i-moon"    viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
 </svg>
 
+<!-- ── App wrapper ── -->
 <div class="wrap">
   <header>
     <div class="kick">Project Rebuild</div>
@@ -157,11 +45,11 @@
   <!-- TODAY -->
   <section class="page" id="page-today">
     <div class="daybar" id="daybar"></div>
-    <div class="hint" id="dayHint">Tap any day to preview its session</div>
+    <div class="hint" id="dayHint"></div>
     <div class="hero">
-      <div class="tag" id="heroTag"></div>
+      <div class="tag"  id="heroTag"></div>
       <h3 id="heroTitle"></h3>
-      <p id="heroDesc"></p>
+      <p  id="heroDesc"></p>
       <div class="progress"><div id="bar"></div></div>
       <div class="pct" id="pct"></div>
     </div>
@@ -172,18 +60,21 @@
   <section class="page" id="page-morning">
     <h2><svg class="ic"><use href="#i-sun"/></svg>Wake-Up Flow · 20-25 min · daily</h2>
     <p class="lead">Move with your breath. Slow beats deep. This undoes the desk.</p>
-    <div class="row"><div class="n">01</div><div><div class="t">Cat-Cow x 10</div><div class="d"><b>Breathe:</b> inhale as you arch, exhale as you round. <b>Wrong if</b> your low back pinches; shrink the range.</div></div></div>
-    <div class="row"><div class="n">02</div><div><div class="t">Thread the Needle x 6/side</div><div class="d">Reach far, let the upper back twist. <b>Wrong if</b> the stretch lands in your shoulder instead of between the shoulder blades.</div></div></div>
-    <div class="row"><div class="n">03</div><div><div class="t">World's Greatest Stretch x 5/side</div><div class="d">Long lunge, hand inside the front foot, rotate and reach up. <b>Breathe:</b> exhale into the rotation.</div></div></div>
-    <div class="row"><div class="n">04</div><div><div class="t">Downward Dog to Cobra x 8</div><div class="d"><b>Breathe:</b> exhale into Dog, inhale through to Cobra. Heels reach down; hips stay relaxed in Cobra.</div></div></div>
-    <div class="row"><div class="n">05</div><div><div class="t">Neck circles + chin tucks x 10</div><div class="d">Make a double chin, feel the back of the neck lengthen. <b>Wrong if</b> you feel strain at the front of the throat.</div></div></div>
-    <div class="row"><div class="n">06</div><div><div class="t">Hip flexor stretch · 45 sec/side</div><div class="d">Squeeze the glute of the back leg to deepen it. Sitting shortens these; this is the antidote.</div></div></div>
-    <div class="row"><div class="n">07</div><div><div class="t">Dead hang or chest stretch · 30-45 sec</div><div class="d">Hang relaxed, slow nose breathing. Decompresses the spine after the flow.</div></div></div>
+    <div id="morningFlow"></div>
 
     <h2><svg class="ic"><use href="#i-zap"/></svg>Sprints · Tue / Thu / Sat</h2>
-    <p class="lead">5 min brisk walk, two build-ups at 60 percent, then:</p>
-    <div class="row"><div class="n">5-6</div><div><div class="t">100 m sprints at 85-90 percent</div><div class="d">Walk back fully between reps. <b>Breathe:</b> hard exhales while sprinting, slow nose breathing in recovery. <b>Wrong if</b> hamstrings feel tight before a rep; skip that session. Never sprint cold.</div></div></div>
-    <div class="note"><svg class="ic"><use href="#i-heart"/></svg>Sprints keep the heart strong and spike growth hormone without burning the surplus that jogging would. Sunday: flow plus an easy 15 minute walk.</div>
+    <p class="lead">5 min brisk walk, two build-ups at 60%, then:</p>
+    <div class="row">
+      <div class="n">5-6</div>
+      <div>
+        <div class="t">100 m sprints at 85-90%</div>
+        <div class="d">Walk back fully between reps. <b>Breathe:</b> hard exhales while sprinting, slow nose breathing in recovery. <b>Wrong if</b> hamstrings feel tight before a rep — skip that session. Never sprint cold.</div>
+      </div>
+    </div>
+    <div class="note">
+      <svg class="ic"><use href="#i-heart"/></svg>
+      Sprints keep your heart strong and spike growth hormone without burning the surplus that jogging would. Sunday: flow plus an easy 15-minute walk.
+    </div>
   </section>
 
   <!-- WEEK -->
@@ -191,173 +82,90 @@
     <h2><svg class="ic"><use href="#i-cal"/></svg>The Week at a Glance</h2>
     <p class="lead">Push-Pull-Legs twice, one athlete day. Beat your logbook in round two. Tap a day to open it.</p>
     <div id="weekList"></div>
-    <div class="note"><svg class="ic"><use href="#i-loop"/></svg>Every 4th week, cut all sets by one third. Deload weeks are when joints recover and growth catches up. Mark it in your calendar now.</div>
+    <div class="note">
+      <svg class="ic"><use href="#i-loop"/></svg>
+      Every 4th week, cut all sets by one third. Deload weeks are when joints recover and growth catches up. Mark it in your calendar now.
+    </div>
   </section>
 
   <!-- RULES -->
   <section class="page" id="page-rules">
     <h2><svg class="ic"><use href="#i-shield"/></svg>The Rules That Matter</h2>
-    <div class="row"><div class="n">01</div><div><div class="t">Protein at every meal</div><div class="d">1.6 to 2 g per kg bodyweight daily. Vegetarian arsenal: paneer, dal, soy chunks, milk, Greek yogurt, peanuts, tofu. The surplus only builds muscle if protein shows up.</div></div></div>
-    <div class="row"><div class="n">02</div><div><div class="t">Sleep 7.5 to 9 hours</div><div class="d">Muscle is built in bed. Treat bedtime like a training session.</div></div></div>
-    <div class="row"><div class="n">03</div><div><div class="t">Never miss twice</div><div class="d">One missed session is life. Two in a row is a broken habit. Protect the streak.</div></div></div>
-    <div class="row"><div class="n">04</div><div><div class="t">Log every set</div><div class="d">Hit the top of a rep range on all sets and the next session gets harder: slower tempo, pause reps, or a harder variation. The logbook is the whole game.</div></div></div>
-    <div class="row"><div class="n">05</div><div><div class="t">Desk rule</div><div class="d">Stand every 45 to 60 min: 10 chin tucks and one doorway stretch. Does more for your neck than any evening routine.</div></div></div>
-    <div class="note"><svg class="ic"><use href="#i-trophy"/></svg>Eight weeks from now you will wish you had started today. You did. Keep showing up.</div>
+    <div id="rulesList"></div>
+    <div class="note">
+      <svg class="ic"><use href="#i-trophy"/></svg>
+      Eight weeks from now you will wish you had started today. You did. Keep showing up.
+    </div>
     <footer>PROJECT REBUILD · IMAGES: FREE-EXERCISE-DB (PUBLIC DOMAIN)</footer>
+  </section>
+
+  <!-- DIET (PIN-protected) -->
+  <section class="page" id="page-diet">
+    <div id="diet-content"></div>
   </section>
 </div>
 
-<nav><div class="tabs">
-  <button class="tab" data-p="today"><svg class="ic"><use href="#i-target"/></svg>Today</button>
-  <button class="tab" data-p="morning"><svg class="ic"><use href="#i-sun"/></svg>Morning</button>
-  <button class="tab" data-p="week"><svg class="ic"><use href="#i-cal"/></svg>Week</button>
-  <button class="tab" data-p="rules"><svg class="ic"><use href="#i-shield"/></svg>Rules</button>
-</div></nav>
+<!-- ── Bottom Nav ── -->
+<nav>
+  <div class="tabs">
+    <button class="tab" data-p="today">
+      <svg class="ic"><use href="#i-target"/></svg>Today
+    </button>
+    <button class="tab" data-p="morning">
+      <svg class="ic"><use href="#i-sun"/></svg>Morning
+    </button>
+    <button class="tab" data-p="week">
+      <svg class="ic"><use href="#i-cal"/></svg>Week
+    </button>
+    <button class="tab" data-p="rules">
+      <svg class="ic"><use href="#i-shield"/></svg>Rules
+    </button>
+    <button class="tab" data-p="diet">
+      <svg class="ic" id="diet-tab-icon"><use href="#i-lock"/></svg>Diet
+    </button>
+  </div>
+</nav>
 
-<script>
-const IMG = n => `https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${n}/0.jpg`;
+<!-- ── PIN Overlay ── -->
+<div class="pin-overlay hidden" id="pin-overlay">
+  <div class="pin-box">
+    <div class="pin-lock-icon">
+      <svg class="ic"><use href="#i-lock"/></svg>
+    </div>
+    <div class="pin-title">Diet Plan</div>
+    <div class="pin-sub">Enter PIN to unlock</div>
 
-const EX = {
-  push: [
-    {name:"Push-ups", dose:"4 x 8-15", img:IMG("Pushups"),
-     breath:"Inhale down, <b>exhale as you press up</b>.",
-     wrong:"Hips sagging means your core quit. One straight line, ears to ankles. Too easy? Elevate your feet."},
-    {name:"Pike Push-ups", dose:"3 x 6-12", img:IMG("Handstand_Push-Ups"),
-     breath:"Inhale lowering, exhale driving up.",
-     wrong:"Head should travel <b>between your hands</b>, not in front of them. Hips stay high the whole rep. This is your shoulder builder."},
-    {name:"DB Lateral Raises", dose:"3 x 15-20 · 3s down", img:IMG("Side_Lateral_Raise"),
-     breath:"Exhale up, slow inhale on the 3 second lowering.",
-     wrong:"Traps burning means you are shrugging. Lead with the <b>elbows</b>, slight bend, stop at shoulder height."},
-    {name:"Diamond Push-ups / Chair Dips", dose:"3 x 8-12", img:IMG("Dips_-_Triceps_Version"),
-     breath:"Exhale on the press.",
-     wrong:"On dips, shoulders creeping toward your ears strains the joint. Pull them down and back first."}
-  ],
-  pull: [
-    {name:"Table / Towel Rows", dose:"4 x 8-12", img:IMG("Inverted_Row"),
-     breath:"<b>Exhale as you pull</b>, inhale lowering.",
-     wrong:"Arms tiring before your back means biceps are stealing the rep. Think <b>elbows to ribs</b>, squeeze shoulder blades at the top."},
-    {name:"DB Rear Delt Flys", dose:"3 x 15-20", img:IMG("Seated_Bent-Over_Rear_Delt_Raise"),
-     breath:"Exhale opening the arms.",
-     wrong:"Feeling it in your neck means you are looking up. Neutral neck, hinge at the hips, pinkies lead. These fix desk posture."},
-    {name:"DB Curls", dose:"3 x 12-15 · 3s down", img:IMG("Dumbbell_Bicep_Curl"),
-     breath:"Exhale up, slow inhale down.",
-     wrong:"Elbows drifting forward turns it into a shoulder raise. Pin them to your sides, full stretch at the bottom."},
-    {name:"Superman Holds", dose:"3 x 30 sec", img:IMG("Superman"),
-     breath:"Slow steady breathing; never hold your breath.",
-     wrong:"Cranking the neck up too far. Eyes on the floor just ahead. This is low back insurance."}
-  ],
-  legs: [
-    {name:"Bulgarian Split Squats", dose:"4 x 8-12 / leg", img:IMG("One_Leg_Barbell_Squat"),
-     breath:"Inhale down, <b>exhale driving up</b>.",
-     wrong:"Front knee caving inward. It should track over your toes. Wobbling is normal at first; slow down rather than shorten the range."},
-    {name:"Glute Bridges", dose:"3 x 15 · 2s squeeze", img:IMG("Butt_Lift_Bridge"),
-     breath:"Exhale up, hold the squeeze, inhale down.",
-     wrong:"Feeling it in your low back means you are overarching. Tuck the ribs, squeeze glutes hard at the top."},
-    {name:"Calf Raises", dose:"3 x 20 · pause top", img:IMG("Standing_Calf_Raises"),
-     breath:"Steady rhythm, exhale on the rise.",
-     wrong:"Bouncing. Pause one full second at the top, lower slow. Range beats speed."},
-    {name:"Hollow Body Hold", dose:"3 x 20-30 sec", img:IMG("Crunches"),
-     breath:"Short controlled breaths; the brace stays on.",
-     wrong:"<b>Low back lifting off the mat</b> is the failure signal. Bend your knees to regress before form breaks."}
-  ],
-  rest: [
-    {name:"Dead Hangs + Monkey Bars", dose:"3 rounds", img:IMG("Pullups"),
-     breath:"Relax and breathe through the nose.",
-     wrong:"Death-gripping. Let the shoulders decompress; grip strength comes free."},
-    {name:"Jump Squats + Broad Jumps", dose:"3 x 8 each", img:IMG("Freehand_Jump_Squat"),
-     breath:"Exhale sharply on every jump.",
-     wrong:"Loud landings. Land soft and quiet like a cat; that is the athletic part."},
-    {name:"Shadow Badminton Footwork", dose:"5-10 min", img:null,
-     breath:"Match breath to movement rhythm.",
-     wrong:"Going through the motions. Push off the outside leg with intent, like a real rally. For old times' sake."}
-  ]
-};
+    <div class="pin-dots">
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+    </div>
 
-const WEEK = [
-  {d:"Mon", key:"push", t:"Push", s:"Chest, shoulders, triceps", c:"var(--sky)", sprint:false},
-  {d:"Tue", key:"pull", t:"Pull", s:"Back, biceps, rear delts", c:"var(--lime)", sprint:true},
-  {d:"Wed", key:"legs", t:"Legs + Core", s:"Split squats, bridges, hollow hold", c:"var(--amber)", sprint:false},
-  {d:"Thu", key:"push", t:"Push", s:"Beat Monday's logbook", c:"var(--sky)", sprint:true},
-  {d:"Fri", key:"pull", t:"Pull", s:"Beat Tuesday's logbook", c:"var(--lime)", sprint:false},
-  {d:"Sat", key:"legs", t:"Legs + Core", s:"Beat Wednesday's logbook", c:"var(--amber)", sprint:true},
-  {d:"Sun", key:"rest", t:"Athlete Day", s:"Park play: hangs, jumps, footwork", c:"var(--violet)", sprint:false}
-];
+    <div class="pin-pad">
+      <div class="pin-key" onclick="pinKey('1')">1</div>
+      <div class="pin-key" onclick="pinKey('2')">2</div>
+      <div class="pin-key" onclick="pinKey('3')">3</div>
+      <div class="pin-key" onclick="pinKey('4')">4</div>
+      <div class="pin-key" onclick="pinKey('5')">5</div>
+      <div class="pin-key" onclick="pinKey('6')">6</div>
+      <div class="pin-key" onclick="pinKey('7')">7</div>
+      <div class="pin-key" onclick="pinKey('8')">8</div>
+      <div class="pin-key" onclick="pinKey('9')">9</div>
+      <div class="pin-key cancel" onclick="pinCancel()">Cancel</div>
+      <div class="pin-key" onclick="pinKey('0')">0</div>
+      <div class="pin-key del" onclick="pinDel()">
+        <svg class="ic"><use href="#i-delete"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
 
-const todayIdx = (new Date().getDay()+6)%7; // Mon=0
-let viewIdx = todayIdx;
-
-// Progress is stored per calendar date of the week being viewed
-function dateOf(idx){
-  const d = new Date();
-  d.setDate(d.getDate() + (idx - todayIdx));
-  return d.toISOString().slice(0,10);
-}
-const load = idx => JSON.parse(localStorage.getItem("pr-"+dateOf(idx))||"{}");
-const save = (idx,obj) => localStorage.setItem("pr-"+dateOf(idx), JSON.stringify(obj));
-
-function renderDaybar(){
-  document.getElementById("daybar").innerHTML = WEEK.map((w,i)=>
-    `<div class="daychip ${i===viewIdx?'sel':''} ${i===todayIdx?'istoday':''}" onclick="setDay(${i})">
-       <div class="dl">${w.d}</div><div class="dd"></div></div>`).join("");
-  document.getElementById("dayHint").textContent =
-    viewIdx===todayIdx ? "Tap any day to preview its session" : "Previewing "+WEEK[viewIdx].d+" · tap the outlined chip to return to today";
-}
-
-function card(e,i){
-  const ph = `<div class="ph"><svg class="ic"><use href="#i-bell"/></svg></div>`;
-  const img = e.img
-    ? `<img src="${e.img}" loading="lazy" alt="${e.name}" onerror="this.parentNode.innerHTML='${ph.replace(/"/g,'&quot;')}'">`
-    : ph;
-  const done = load(viewIdx)[i];
-  return `<div class="card ${done?'done':''}">
-    <div class="imgbox">${img}<div class="num">${String(i+1).padStart(2,"0")}</div></div>
-    <div class="cbody">
-      <div class="crow"><div class="cname">${e.name}</div><div class="cdose">${e.dose}</div></div>
-      <div class="cue breath"><svg class="ic"><use href="#i-wind"/></svg><span>${e.breath}</span></div>
-      <div class="cue wrong"><svg class="ic"><use href="#i-alert"/></svg><span><b>You are doing it wrong if:</b> ${e.wrong}</span></div>
-      <button class="check" onclick="toggle(${i})">
-        <svg class="ic"><use href="#i-${done?'check':'circle'}"/></svg>${done?'Done':'Mark done'}</button>
-    </div></div>`;
-}
-
-function renderDay(){
-  const w = WEEK[viewIdx];
-  const isToday = viewIdx===todayIdx;
-  document.getElementById("heroTag").textContent =
-    (isToday?"Today · ":"")+w.d+(w.sprint?" · Sprint morning":"");
-  document.getElementById("heroTitle").textContent = w.t;
-  document.getElementById("heroDesc").textContent =
-    w.key==="rest" ? "No logbook today. Go to the park and play. Springy beats stiff."
-    : (w.sprint?"Flow plus sprints this morning. ":"Morning flow first. ")+"Strength in the evening, 30 to 40 minutes. Log every set.";
-  const done = load(viewIdx), n = EX[w.key].length,
-        dn = EX[w.key].map((_,i)=>done[i]).filter(Boolean).length;
-  document.getElementById("bar").style.width = (100*dn/n)+"%";
-  document.getElementById("pct").textContent =
-    dn===n ? "SESSION COMPLETE — EAT, SLEEP, GROW" : dn+" / "+n+" EXERCISES DONE";
-  document.getElementById("dayCards").innerHTML =
-    `<h2><svg class="ic"><use href="#i-bell"/></svg>Evening · ${w.t}</h2>` +
-    EX[w.key].map(card).join("");
-  renderDaybar();
-}
-function setDay(i){ viewIdx=i; renderDay(); }
-function toggle(i){ const d=load(viewIdx); d[i]=!d[i]; save(viewIdx,d); renderDay(); }
-
-// Week list (tappable -> opens that day)
-document.getElementById("weekList").innerHTML = WEEK.map((w,i)=>
-  `<div class="wk ${i===todayIdx?'istoday':''}" onclick="setDay(${i});openTab('today')">
-     <div class="dot" style="background:${w.c}"></div><div class="wd">${w.d.toUpperCase()}</div>
-     <div><div class="wt">${w.t}${w.sprint?" · sprints":""}</div><div class="ws">${w.s}</div></div>
-     <div class="go"><svg class="ic"><use href="#i-arrow"/></svg></div></div>`).join("");
-
-// Tabs
-function openTab(p){
-  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.p===p));
-  document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id==="page-"+p));
-  window.scrollTo({top:0});
-}
-document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>openTab(b.dataset.p)));
-openTab("today");
-renderDay();
-</script>
+<!-- ── Scripts (order matters: data → modules → app) ── -->
+<script src="js/data.js"></script>
+<script src="js/morning.js"></script>
+<script src="js/rules.js"></script>
+<script src="js/diet.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
